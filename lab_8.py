@@ -91,21 +91,40 @@ def main():
             print(f"Error: {abs(exact - res_13)}")
 
         elif choice == '2':
+            # Data from Q3
             x_data = np.array([0, 1, 2])
             y_data = np.array([1, 2, 0])
-            dy_data = np.array([0, 1, -1])
+            dy_data = np.array([0, 1, -1])  # Slopes at each point
             target = 1.5
             
             val, table = hermite_interpolation(x_data, y_data, dy_data, target)
             print(f"Hermite value at x={target}: {val}")
             
-            x_range = np.linspace(min(x_data), max(x_data), 100)
+            # Plotting the Polynomial
+            x_range = np.linspace(min(x_data) - 0.5, max(x_data) + 0.5, 200)
             y_poly = [hermite_interpolation(x_data, y_data, dy_data, xi)[0] for xi in x_range]
-            plt.plot(x_range, y_poly, label="Hermite Poly")
-            plt.scatter(x_data, y_data, color='red', label="Data points")
-            plt.title("Hermite Interpolation")
+            
+            plt.figure(figsize=(10, 6))
+            plt.plot(x_range, y_poly, label="Hermite Polynomial", color='blue', linewidth=2)
+            plt.scatter(x_data, y_data, color='red', zorder=5, label="Data Points")
+
+            # --- MARKING THE LINES OF SLOPE (Tangents) ---
+            tan_len = 0.3  # Length of the tangent line to display
+            for i in range(len(x_data)):
+                x0, y0, m = x_data[i], y_data[i], dy_data[i]
+                
+                # Define two points to draw the tangent line segment
+                x_tan = np.array([x0 - tan_len, x0 + tan_len])
+                y_tan = y0 + m * (x_tan - x0)
+                
+                plt.plot(x_tan, y_tan, '--', color='green', label=f"Slope m={m}" if i == 0 else "")
+                plt.text(x0, y0 + 0.1, f" m={m}", fontsize=10, color='green')
+
+            plt.axhline(0, color='black', linewidth=0.5)
+            plt.axvline(0, color='black', linewidth=0.5)
+            plt.title("Hermite Interpolation with Tangent Slopes")
             plt.legend()
-            plt.grid(True)
+            plt.grid(True, linestyle=':', alpha=0.7)
             plt.show()
 
         elif choice == '3':
